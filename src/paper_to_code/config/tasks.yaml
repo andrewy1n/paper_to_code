@@ -1,17 +1,33 @@
-research_task:
+architecture_task:
   description: >
-    Conduct a thorough research about {topic}
-    Make sure you find any interesting and relevant information given
-    the current year is {current_year}.
+    Analyze research paper and create technical implementation plan.
+    Identify required components and create file structure blueprint.
   expected_output: >
-    A list with 10 bullet points of the most relevant information about {topic}
-  agent: researcher
+    Markdown document outlining implementation plan and file structure
+  agent: code_architect
 
-reporting_task:
+development_task:
   description: >
-    Review the context you got and expand each topic into a full section for a report.
-    Make sure the report is detailed and contains any and all relevant information.
+    Convert architecture plan into working Python code.
+    Implement components with proper error handling and PEP8 compliance.
   expected_output: >
-    A fully fledged report with the main topics, each with a full section of information.
-    Formatted as markdown without '```'
-  agent: reporting_analyst
+    Python code files wrapped in markdown code blocks with filenames.
+    Format: ```filename.py\ncode\n```
+  agent: developer
+
+review_task:
+  description: >
+    Perform static analysis on generated code.
+    Check for syntax errors and potential issues.
+    Verify PEP8 compliance and proper error handling.
+  expected_output: >
+    List of found issues or 'APPROVED' if code is valid
+  agent: code_review
+
+qa_task:
+  description: >
+    Validate final code implementation against original requirements.
+    Ensure all components from architecture plan are implemented.
+  expected_output: >
+    Validation report with PASS/FAIL status
+  agent: qa_engineer

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
 import warnings
+from crewai_tools import FileReadTool
 
 from datetime import datetime
 
@@ -8,18 +9,19 @@ from paper_to_code.crew import PaperToCode
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
-# This main file is intended to be a way for you to run your
-# crew locally, so refrain from adding unnecessary logic into this file.
-# Replace with inputs you want to test with, it will automatically
-# interpolate any tasks and agents information
-
 def run():
     """
     Run the crew.
     """
+
+    try:
+        reader = PdfReader("1-s2.0-S0098300418305909-main.pdf")
+        text = " ".join([page.extract_text() for page in reader.pages])
+    except Exception as e:
+        raise RuntimeError(f"PDF reading failed: {str(e)}")
+    
     inputs = {
-        'topic': 'AI LLMs',
-        'current_year': str(datetime.now().year)
+        'research_paper_txt': text,
     }
     
     try:

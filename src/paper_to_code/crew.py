@@ -2,51 +2,83 @@ from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
-# If you want to run a snippet of code before or after the crew starts,
-# you can use the @before_kickoff and @after_kickoff decorators
-# https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
+import os
 
 @CrewBase
 class PaperToCode():
-    """PaperToCode crew"""
-
     agents: List[BaseAgent]
     tasks: List[Task]
 
-    # Learn more about YAML configuration files here:
-    # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
-    # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
+    def __init__(self):
+        self.llm = self._configure_llm()
+
+    def _configure_llm(self):
+        return {
+            "config": {
+                "base_url": "https://api.deepseek.com",
+                "api_key": os.getenv("DEEPSEEK_API_KEY")
+            },
+            "model": "deepseek-reasoner"
+        }
     
-    # If you would like to add tools to your agents, you can learn more about it here:
-    # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
-    def researcher(self) -> Agent:
+    def code_architect(self) -> Agent:
         return Agent(
-            config=self.agents_config['researcher'], # type: ignore[index]
+            config=self.agents_config['code_architect'],
+            llm=self.llm,
             verbose=True
         )
-
+    
     @agent
-    def reporting_analyst(self) -> Agent:
+    def developer(self):
         return Agent(
-            config=self.agents_config['reporting_analyst'], # type: ignore[index]
+            config=self.agents_config['developer'],
+            llm=self.llm,
             verbose=True
         )
-
-    # To learn more about structured task outputs,
-    # task dependencies, and task callbacks, check out the documentation:
-    # https://docs.crewai.com/concepts/tasks#overview-of-a-task
-    @task
-    def research_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['research_task'], # type: ignore[index]
+    
+    @agent
+    def code_review(self):
+        return Agent(
+            config=self.agents_config['code_review'],
+            llm=self.llm,
+            verbose=True
         )
-
-    @task
-    def reporting_task(self) -> Task:
+    
+    @agent
+    def qa_engineer(self):
+        return Agent(
+            config=self.agents_config['qa_engineer'],
+            llm=self.llm,
+            verbose=True
+        )
+    
+    def architecture_task(self, agent):
         return Task(
-            config=self.tasks_config['reporting_task'], # type: ignore[index]
-            output_file='report.md'
+            config=self.tasks_config['architecture_task'],
+            output_file="requirements.md",
+            agent=agent
+        )
+    
+    def development_task(self, agent, context):
+        return Task(
+            config=self.tasks_config['development_task'],
+            agent=agent,
+            context=context
+        )
+    
+    def review_task(self, agent, context):
+        return Task(
+            config=self.tasks_config['review_task'],
+            agent=agent,
+            context=context
+        )
+    
+    def qa_task(self, agent, context):
+        return Task(
+            config=self.tasks_config['qa_task'],
+            agent=agent,
+            context=context
         )
 
     @crew
