@@ -1,0 +1,23 @@
+[project]
+name = "paper_to_code"
+version = "0.1.0"
+description = "paper_to_code using crewAI"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "crewai[tools]>=0.118.0,<1.0.0"
+]
+
+[project.scripts]
+paper_to_code = "paper_to_code.main:run"
+run_crew = "paper_to_code.main:run"
+train = "paper_to_code.main:train"
+replay = "paper_to_code.main:replay"
+test = "paper_to_code.main:test"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.crewai]
+type = "crew"
